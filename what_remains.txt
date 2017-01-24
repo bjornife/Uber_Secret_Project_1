@@ -1,0 +1,8 @@
+What remains?
+Update algorithm to run with team names as input (this should be a relatively simple tweak)
+
+Automate:
+	- Get updated files from www.football-data.co.uk (probably best to remove old files)
+	- Place bets on bet365.com (requires login?)
+	- ???
+	- PROFIT

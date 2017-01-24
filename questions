@@ -1,0 +1,5 @@
+Questions about MLP:
+
+Does correlations between input variables affect the effectivity of the nn?
+Can adding too many hidden nodes lead to suboptimal results or does it only affect efficiency?
+Can adding too many hidden layers lead to suboptimal results or does it only affect efficiency?
