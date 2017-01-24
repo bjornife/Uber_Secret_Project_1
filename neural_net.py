@@ -53,7 +53,7 @@ with open('testt_s.txt','r') as testt_file:
 
 #n.sortModules()
 
-nhidden = 6
+nhidden = 7
 nhidden2 = 4
 nhidden3 = 6
 
@@ -79,122 +79,122 @@ for i in range(len(test)):
 
 momentum = 0.04
 all_results = []
-for i in range(6,7):
-	print("HIDDEN NODES: ", str(i))
-	n = buildNetwork(np.shape(train)[1], i, np.shape(traint)[1], outclass = SigmoidLayer)
+	
 
-	trainer = BackpropTrainer(n,training_set, momentum = momentum, verbose = True, weightdecay = 0.0, learningrate = 0.2)
+n = buildNetwork(np.shape(train)[1], nhidden, np.shape(traint)[1], outclass = SigmoidLayer)
 
-	trainer.trainUntilConvergence(verbose = True, maxEpochs = 10)
+trainer = BackpropTrainer(n,training_set, momentum = momentum, verbose = True, weightdecay = 0.0, learningrate = 0.2)
 
-	test_results = trainer.testOnClassData(dataset = testing_set, verbose = True)
+trainer.trainUntilConvergence(verbose = True, maxEpochs = 10)
 
-	away_matches_won = 0
-	home_matches_won = 0
-	for match in testt:
-		if match[0] == 1:
-			home_matches_won+=1
-		elif match[2] == 1:
-			away_matches_won+=1
+test_results = trainer.testOnClassData(dataset = testing_set, verbose = True)
 
-	print("test set size: ", len(testt))
-	print("P_h = ", home_matches_won/len(testt))
-	print("P_a = ", away_matches_won/len(testt))
+away_matches_won = 0
+home_matches_won = 0
+for match in testt:
+	if match[0] == 1:
+		home_matches_won+=1
+	elif match[2] == 1:
+		away_matches_won+=1
 
-	correct_guesses = 0
-	correct_away_guesses = 0
-	away_guesses = 0
-	correct_home_guesses = 0
-	home_guesses = 0
-	for j in range(len(testt)):
-		if test_results[j] == np.argmax(testt[j]):
-			correct_guesses+=1
-			if test_results[j] == 2:
-				correct_away_guesses+=1
-			if test_results[j] == 0:
-				correct_home_guesses+=1
+print("test set size: ", len(testt))
+print("P_h = ", home_matches_won/len(testt))
+print("P_a = ", away_matches_won/len(testt))
+
+correct_guesses = 0
+correct_away_guesses = 0
+away_guesses = 0
+correct_home_guesses = 0
+home_guesses = 0
+for j in range(len(testt)):
+	if test_results[j] == np.argmax(testt[j]):
+		correct_guesses+=1
 		if test_results[j] == 2:
-			away_guesses+=1
+			correct_away_guesses+=1
 		if test_results[j] == 0:
-			home_guesses+=1
+			correct_home_guesses+=1
+	if test_results[j] == 2:
+		away_guesses+=1
+	if test_results[j] == 0:
+		home_guesses+=1
 
-	all_results.append(correct_guesses/len(testt))
-	print("Correct = ", correct_guesses/len(testt))
-	if away_guesses > 0:
-		print("Correct away = ", correct_away_guesses/away_guesses)
-	if home_guesses > 0:
-		print("Correct home = ", correct_home_guesses/home_guesses)
+all_results.append(correct_guesses/len(testt))
+print("Correct = ", correct_guesses/len(testt))
+if away_guesses > 0:
+	print("Correct away = ", correct_away_guesses/away_guesses)
+if home_guesses > 0:
+	print("Correct home = ", correct_home_guesses/home_guesses)
 
 
 	""""""""" AND NOW THE BETS! """"""""""""
 	"""""""""""""""""""""""""""""""""""""""
 
-	total_earnings = 0
-	total_random_earnings = 0
-	total_naive_earnings = 0
-	with open('test_reference.txt') as ref_file:
-		reference = eval(ref_file.read())
-		for i in range(len(test_results)):
+total_earnings = 0
+total_random_earnings = 0
+total_naive_earnings = 0
+with open('test_reference.txt') as ref_file:
+	reference = eval(ref_file.read())
+	for i in range(len(test_results)):
+		total_earnings -= 10
+		total_random_earnings -=10
+		total_naive_earnings -=10
+		if np.argmax(testt[i]) == 0:
+			try:
+				total_naive_earnings += float(reference[i][7])*10
+			except ValueError:
+				pass
+		if test_results[i] == np.argmax(testt[i]):
+			try:
+				total_earnings += float(reference[i][test_results[i] + 7])*10
+			except ValueError:
+				pass
+				#some odds values are void
+		if random.randint(0,2) == np.argmax(testt[i]):
+			try:
+				total_random_earnings += float(reference[i][test_results[i] + 7])*10
+			except ValueError:
+				pass
+				#some odds values are void
+print("Total earnings: ", total_earnings)
+print("Earnings per game: ", total_earnings/len(testt))
+print("Total random earnings: ", total_random_earnings)
+print("Total random earnings per game: ", total_random_earnings/len(testt))
+print("Total naive earnings: ", total_naive_earnings)
+print("Total naive earnings per game: ", total_naive_earnings/len(testt))
+
+	### Alternatively: Bet only when prediction is away win ###
+total_earnings = 0
+
+with open('test_reference.txt') as ref_file:
+	reference = eval(ref_file.read())
+	for i in range(len(test_results)):
+		if test_results[i] == 2:
 			total_earnings -= 10
-			total_random_earnings -=10
-			total_naive_earnings -=10
-			if np.argmax(testt[i]) == 0:
-				try:
-					total_naive_earnings += float(reference[i][7])*10
-				except ValueError:
-					pass
 			if test_results[i] == np.argmax(testt[i]):
 				try:
 					total_earnings += float(reference[i][test_results[i] + 7])*10
 				except ValueError:
 					pass
 					#some odds values are void
-			if random.randint(0,2) == np.argmax(testt[i]):
-				try:
-					total_random_earnings += float(reference[i][test_results[i] + 7])*10
-				except ValueError:
-					pass
-					#some odds values are void
-	print("Total earnings: ", total_earnings)
-	print("Earnings per game: ", total_earnings/len(testt))
-	print("Total random earnings: ", total_random_earnings)
-	print("Total random earnings per game: ", total_random_earnings/len(testt))
-	print("Total naive earnings: ", total_naive_earnings)
-	print("Total naive earnings per game: ", total_naive_earnings/len(testt))
-
-	### Alternatively: Bet only when prediction is away win ###
-	total_earnings = 0
-
-	with open('test_reference.txt') as ref_file:
-		reference = eval(ref_file.read())
-		for i in range(len(test_results)):
-			if test_results[i] == 2:
-				total_earnings -= 10
-				if test_results[i] == np.argmax(testt[i]):
-					try:
-						total_earnings += float(reference[i][test_results[i] + 7])*10
-					except ValueError:
-						pass
-						#some odds values are void
-	print("Total earnings on away bets: ", total_earnings)
-	print("Earnings per game on away bets: ", total_earnings/test_results.count(2))
+print("Total earnings on away bets: ", total_earnings)
+print("Earnings per game on away bets: ", total_earnings/test_results.count(2))
 
 	### Or... when the prediction is a home win ###
-	total_earnings = 0
+total_earnings = 0
 
-	with open('test_reference.txt') as ref_file:
-		reference = eval(ref_file.read())
-		for i in range(len(test_results)):
-			if test_results[i] == 0:
-				total_earnings -= 10
-				if test_results[i] == np.argmax(testt[i]):
-					try:
-						total_earnings += float(reference[i][test_results[i] + 7])*10
-					except ValueError:
-						pass
+with open('test_reference.txt') as ref_file:
+	reference = eval(ref_file.read())
+	for i in range(len(test_results)):
+		if test_results[i] == 0:
+			total_earnings -= 10
+			if test_results[i] == np.argmax(testt[i]):
+				try:
+					total_earnings += float(reference[i][test_results[i] + 7])*10
+				except ValueError:
+					pass
 						#some odds values are void
-	print("Total earnings on home bets: ", total_earnings)
-	print("Earnings per game on home bets: ", total_earnings/test_results.count(0))
+print("Total earnings on home bets: ", total_earnings)
+print("Earnings per game on home bets: ", total_earnings/test_results.count(0))
 
 
 #with open('results.txt','w') as outputfile:
