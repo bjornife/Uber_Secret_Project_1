@@ -6,7 +6,7 @@ import mlp
 
 all_seasons = []
 all_matches = []
-for filename in os.listdir('Stash'):
+for filename in os.listdir('../../Football_Data/Stash'):
 	file = open('Stash/' + filename,'r')
 	season = file.read().rstrip()
 	all_seasons.append(season)

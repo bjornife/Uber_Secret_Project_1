@@ -1,0 +1,1 @@
+[['Brighton', 'Cardiff'], ['Eastleigh', 'Macclesfield'], ['Eastbourne Borough', 'Dartford'], ['Weymouth', 'Hayes & Yeading'], ['Napoli', 'Fiorentina'], ['Mansfield', 'Wycombe'], ['Luton', 'Yeovil'], ['Reading', 'Fulham'], ['Bordeaux', 'Paris SG']]
