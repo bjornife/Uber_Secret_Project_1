@@ -16,3 +16,5 @@ regger.fit(train, traint)
 print(regger.coef_)
 
 #slope, intercept, r_value, p_value, std_err = stats.linregress(train,traint)
+
+#IDEA: Linreg-initialization of nn input

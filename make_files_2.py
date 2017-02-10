@@ -7,7 +7,7 @@ import mlp
 all_seasons = []
 all_matches = []
 for filename in os.listdir('../../Football_Data/Stash'):
-	file = open('Stash/' + filename,'r')
+	file = open('../../Football_Data/Stash/' + filename,'r')
 	season = file.read().rstrip()
 	all_seasons.append(season)
 	file.close()
@@ -16,16 +16,18 @@ for season in all_seasons:
 	season = season.split('\n')
 	for i in range(0,len(season)):
 		season[i] = season[i].split(',')
-	if "HST" in season[0]:
+	
+	if "Date" in season[0] and "HomeTeam" in season[0] and "AwayTeam" in season[0] and "FTHG" in season[0] and "FTAG" in season[0]:
+
 		has_odds = False
 		date_index = season[0].index("Date")
 		ht_index = season[0].index("HomeTeam")
 		at_index = season[0].index("AwayTeam")
 		home_goal_index = season[0].index("FTHG")
 		away_goal_index = season[0].index("FTAG")
-		hst_index = season[0].index("HST")
-		ast_index =  season[0].index("AST")
-		
+		#hst_index = season[0].index("HST")
+		#ast_index =  season[0].index("AST")
+
 		home_odds_index = -1
 		draw_odds_index = -1
 		away_odds_index = -1
@@ -37,8 +39,10 @@ for season in all_seasons:
 			away_odds_index = season[0].index("BWA")
 
 		for i in range(1,len(season)):
-			if season[i][hst_index] != '' and season[i][ast_index] != '':
-				match = [season[i][date_index],season[i][ht_index],season[i][at_index],season[i][home_goal_index],season[i][away_goal_index],season[i][hst_index],season[i][ast_index]]
+			#if season[i][hst_index] != '' and season[i][ast_index] != '':
+			if len(season[i]) >= max(date_index,ht_index,at_index,home_goal_index,away_goal_index) and season[i][date_index] != '' and season[i][ht_index] != '' and season[i][at_index] != '' and season[i][home_goal_index] != '' and season[i][away_goal_index] != '':
+				#match = [season[i][date_index],season[i][ht_index],season[i][at_index],season[i][home_goal_index],season[i][away_goal_index],season[i][hst_index],season[i][ast_index]]
+				match = [season[i][date_index],season[i][ht_index],season[i][at_index],season[i][home_goal_index],season[i][away_goal_index]]
 				if has_odds:
 					match.extend([season[i][home_odds_index],season[i][draw_odds_index],season[i][away_odds_index]])
 				all_matches.append(match)

@@ -1,7 +1,8 @@
 import os
+from make_sets import sets_maker
+from neural_net import neural_net
 
-for i in range(1):
-	os.system('python update_stash.py')
-	os.system('python make_files_2.py')
-	os.system('python make_sets.py')
-	os.system('python neural_net.py')
+sets = sets_maker()
+train,traint,valid,validt,test,testt,reference = sets.run()
+nn = neural_net()
+nn.run(train,traint,valid,validt,test,testt,reference)

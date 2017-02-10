@@ -26,6 +26,9 @@ with open('validt_s.txt','r') as validt_file:
 with open('live_s.txt','r') as test_file:
 	test = eval(test_file.read())
 
+with open('live_ref.txt','r') as ref_file:
+	reference = eval(ref_file.read())
+
 
 #INPUT:
 #<home team form> <home team home form> <inter-team form> <away team form> <away team away form>
@@ -51,7 +54,7 @@ with open('live_s.txt','r') as test_file:
 
 #n.sortModules()
 
-nhidden = 7
+nhidden = 6
 nhidden2 = 4
 nhidden3 = 6
 
@@ -67,8 +70,6 @@ validation_set = SupervisedDataSet(np.shape(valid)[1], np.shape(validt)[1])
 for i in range(np.shape(valid)[0]):
 	training_set.addSample(valid[i],validt[i])
 
-#for i in range(np.shape(test)[0]):
-#	training_set.addSample(test[i],testt[i])
 
 testing_set = SupervisedDataSet(np.shape(test)[1], 3)
 for i in range(len(test)):
@@ -80,11 +81,23 @@ all_results = []
 
 n = buildNetwork(np.shape(train)[1], nhidden, np.shape(traint)[1], outclass = SigmoidLayer)
 
-trainer = BackpropTrainer(n,training_set, momentum = momentum, verbose = True, weightdecay = 0.0, learningrate = 0.2)
+trainer = BackpropTrainer(n,training_set, momentum = momentum, verbose = True, weightdecay = 0.0, learningrate = 0.1)
 
 trainer.trainUntilConvergence(verbose = True, maxEpochs = 10)
 
-test_results = trainer.testOnClassData(dataset = testing_set, verbose = True)
+test_results_class = trainer.testOnClassData(dataset = testing_set, verbose = True)
+test_results = []
+for match in test:
+	r = n.activate(match)
+	for i in range(len(r)):
+		r[i] = 1/r[i]
+	test_results.append(r)
+
 
 with open('final_results.txt','w') as outputfile:
-	outputfile.write(str(test_results))
+	for i in range(len(test_results)):
+		outputfile.write(str(reference[i]) + ':		' + str(test_results[i]) + '\n')
+
+with open('live_results.txt','w') as outputfile_2:
+	for i in range(len(test_results_class)):
+		outputfile_2.write(str(reference[i]) + ':		' + str(test_results_class[i]) + '\n')
